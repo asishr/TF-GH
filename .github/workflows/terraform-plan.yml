@@ -26,3 +26,5 @@ jobs:
 
     - name: TF Init
       run: terraform init
+    - name: TF Apply
+      run: terraform apply --auto-approve
