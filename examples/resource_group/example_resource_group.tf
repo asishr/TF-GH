@@ -4,7 +4,7 @@ provider "azurerm" {
 
 module "resource_group" {
   source   = "../../modules/common/resource_group"
-  name     = "sample-rg"
+  name     = "tf-gh-sample-rg"
   location = "Canada Central"
   tags     = { "CostCenter" = "1234" }
 }

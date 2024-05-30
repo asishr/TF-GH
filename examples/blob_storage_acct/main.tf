@@ -14,7 +14,7 @@ resource "random_string" "random" {
 
 
 module "storage" {
-  source  = "../../modules/common/storage_account"
+  source  = "../modules/common/storage_account"
   storage_account       = var.storage_account_name
   create_resource_group = false
   resource_group_name   = "MGMT-Dev-RG"
