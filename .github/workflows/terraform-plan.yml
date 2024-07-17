@@ -5,26 +5,59 @@ on:
     branches: [ "gh-actions" ]
 
 permissions:
-  contents: read
   id-token: write
+  contents: read
+  # pull-requests: write
+
+#These environment variables are used by the terraform azure provider to setup OIDD authenticate. 
+env:
+  ARM_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
+  ARM_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+  ARM_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
 
 jobs:
-  terraform:
-    name: 'Terraform'
+  terraform-plan:
+    name: 'Terraform Plan'
     runs-on: ubuntu-latest
+    env:
+      #this is needed since we are running terraform with read-only permissions
+      ARM_SKIP_PROVIDER_REGISTRATION: true
+    outputs:
+      tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
 
     steps:
+    # Checkout the repository to the GitHub Actions runner
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: login
-      uses: Azure/login@v1
+    # Install the latest version of the Terraform CLI
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        terraform_wrapper: false
 
-    - name: TF Init
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
       run: terraform init
-    - name: TF Apply
-      run: terraform apply --auto-approve
+
+    # Checks that all Terraform configuration files adhere to a canonical format
+    # Will fail the build if not
+    - name: Terraform Format
+      run: terraform fmt -check
+
+    # Generates an execution plan for Terraform
+    # An exit code of 0 indicated no changes, 1 a terraform failure, 2 there are pending changes.
+    - name: Terraform Plan
+      id: tf-plan
+      run: |
+        export exitcode=0
+        terraform plan -detailed-exitcode -no-color -out tfplan || export exitcode=$?
+
+        echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
+        
+        if [ $exitcode -eq 1 ]; then
+          echo Terraform Plan Failed!
+          exit 1
+        else 
+          exit 0
+        fi
