@@ -1,3 +1,10 @@
+provider "azurerm" {
+  features {}
+}
+
+data "azurerm_subscription" "current" {
+}
+
 module "resource_group" {
   source   = "../../modules/common/resource_group"
   name     = "tf-gh-sample-rg1"
