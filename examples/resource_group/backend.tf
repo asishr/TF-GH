@@ -26,5 +26,7 @@ terraform {
 provider "azurerm" {
   features {}
   use_oidc        = true # Use OIDC to authenticate to Azure
-  subscription_id = "81d07db3-86e1-49db-90a8-994e8228c86d"
+  subscription_id = "633c41b2-9e22-4a9c-90fb-299daded47bc"
+  # tenant_id = ""
+  # client_id = ""
 }
