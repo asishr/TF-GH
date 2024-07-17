@@ -19,9 +19,9 @@ terraform {
     storage_account_name  = "satftfstatebackend"
     container_name        = "tfstate"
     key                   = "dev.tfstate"
-    use_oidc              = true # To use OIDC to authenticate to the backend
-    tenant_id = "36f13337-06d5-47b6-80f8-7b85cc344f98"
-    client_id = "96844b22-b284-4ab9-b112-6d340b9db420"
+    use_oidc              = false # To use OIDC to authenticate to the backend
+    # tenant_id = "36f13337-06d5-47b6-80f8-7b85cc344f98"
+    # client_id = "96844b22-b284-4ab9-b112-6d340b9db420"
   }
 }
 
