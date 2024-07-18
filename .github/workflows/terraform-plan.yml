@@ -1,6 +1,8 @@
 name: 'Terraform'
 
-on:
+runs-on: self-hosted
+
+on: 
   push:
     branches: [ "gh-actions" ]
 
@@ -56,7 +58,7 @@ jobs:
         else 
           exit 0
         fi
-        
+
     # Terraform Apply
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
